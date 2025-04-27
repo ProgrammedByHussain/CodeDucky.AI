@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -39,20 +39,16 @@ def get_hint():
         if not data:
             return jsonify({"error": "No data provided"}), 400
         
-        # Extract data from request
         problem_title = data.get('problemTitle', '')
         problem_description = data.get('problemDescription', '')
         user_code = data.get('userCode', '')
         language = data.get('language', '')
         
-        # Log request (excluding potentially large code snippets)
         logger.info(f"Received hint request for problem: {problem_title}")
         
-        # Validate required fields
         if not problem_title or not problem_description or not user_code:
             return jsonify({"error": "Missing required fields"}), 400
         
-        # Create prompt for OpenAI
         prompt = f"""
         You are an experienced programming mentor helping someone solve a LeetCode problem.
         
@@ -69,10 +65,9 @@ def get_hint():
         
         Please provide a helpful hint that guides the user toward the solution without giving it away completely.
         Focus on identifying issues in their approach or suggesting a better algorithm or data structure.
-        Keep your hint concise (100-200 words) and include a specific suggestion they can implement.
+        Keep your hint concise (20-50 words) and include a specific suggestion they can implement.
         """
         
-        # Call OpenAI API
         response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[
@@ -83,7 +78,6 @@ def get_hint():
             temperature=0.7
         )
         
-        # Extract hint from response
         hint = response.choices[0].message.content.strip()
         
         return jsonify({

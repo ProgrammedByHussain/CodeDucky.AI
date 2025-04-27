@@ -32,8 +32,9 @@ const Popup = () => {
     setLoading(true);
     setError("");
 
+    // local host for implementation testing 04/26/2025
     try {
-      const response = await fetch("https://backend-url.com/hint", {
+      const response = await fetch("http://localhost:5000/hint", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
